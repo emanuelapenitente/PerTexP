@@ -1,0 +1,47 @@
+########################
+# MATLAB / Simulink
+########################
+
+# Autosave / backup
+*.asv
+*.m~
+*.autosave
+
+# Simulink recovery / restore
+*.slx.r*
+*.mdl.r*
+
+# Derived / obscured files
+*.p
+
+# Compiled MEX files
+*.mex*
+
+# Packaged app and toolbox files
+*.mlappinstall
+*.mltbx
+
+# Deployable archives
+*.ctf
+
+# Generated helpsearch folders
+helpsearch*/
+
+# Code generation folders
+slprj/
+sccprj/
+codegen/
+
+# Cache files
+*.slxc
+
+# Cloud based storage dotfile
+.MATLABDriveTag
+
+
+########################
+# Generated output: figure folders (EPS/PNG)
+########################
+
+fig_*_eps/
+fig_*_png/
