@@ -70,6 +70,12 @@ Run the main script ```pertexp_simulator.m```.
 In `pertexp_simulator.m`, the *Simulation* section contains:
 ```matlab
 use_noise = false;   % true = add noise, false = no noise
+
+if use_noise
+    noise_level = 0.05;   % ±5%
+else
+    noise_level = 0;
+end
 ```
 
 - If `use_noise = true`, the script perturbs the **end-of-year state** before starting the next year using:
