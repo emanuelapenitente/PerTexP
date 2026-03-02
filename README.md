@@ -98,9 +98,9 @@ pertexp_simulator
 ### 3) How to produce the contour plots of $\mathcal{R}_c$
 
 
-Run: ```RC_contour.m```
+Run ```RC_contour.m```.
 
-This script produces contour plots of \(\mathcal{R}_c\) over grids of vaccination coverages, including:
+This script produces contour plots of $\mathcal{R}_c$ over grids of vaccination coverages, including:
 
 1. $\mathcal{R}_c$ as a function of **annual infant coverage** $\psi_1^{\mathrm{ann}}$ and **maternal coverage** $p$.
 2. $\mathcal{R}_c$ as a function of **annual booster coverage** $\psi_2^{\mathrm{ann}}$ and **maternal coverage** $p$.
