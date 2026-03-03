@@ -38,7 +38,7 @@ No additional toolboxes are required.
 
 > **Important:** keep all repository files in the **same folder** (i.e., do not move `.m` files, the `.mlapp`, or `pertexp_logo.png` into subfolders). The GUI and the scripts assume that all contents are located in a single directory; moving files may break function calls.
 
-### 1) How to use the GUI (Graphical User Interface)
+### 1) How to use the GUI
 
 Open and run `pertexp_GUI.mlapp`.
 
