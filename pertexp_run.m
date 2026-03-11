@@ -45,14 +45,6 @@ r1                   = r1_ann^(1/52);             % weekly survival probability
 Lambda = (1 - r1*(1 - eta)) * N1;                 % weekly births into infants
 r2     = 1 - (r1 * eta * N1) / N2;                % weekly survival probability, non-infants
 mu2_ann = 1 - r2^52;                              % annual death probability, non-infants (derived)
-
-% --- Disease-induced mortality, infants ---
-d_per_thousand = 6.3;                             % annual pertussis death probability per 1000 infected infants
-d_ann          = d_per_thousand/1000;             % annual pertussis death probability (fraction)
-d              = 1 - (1 - d_ann)^(1/52);          % weekly death probability (infected infants)
-r3_ann         = 1 - (mu1_ann + d_ann);           % annual survival probability for infected infants
-r3             = r3_ann^(1/52);                   % weekly survival probability for infected infants
-
 nu_rate = 1/(10*52);                              % waning rate of natural immunity (weeks^-1)
 nu      = 1 - exp(-nu_rate);                      % weekly probability of losing natural immunity
 
@@ -63,8 +55,17 @@ gamma1      = 1 - exp(-gamma1_rate); % weekly recovery probability (infants)
 gamma2_rate = 1/3;                % recovery rate (non-infants)
 gamma2      = 1 - exp(-gamma2_rate); % weekly recovery probability (non-infants)
 
+% --- Disease-induced mortality, infants ---
+p_CFR  = 6.3/1000;                                %Case Fatality Rate (CFR)
+r3 = (1 - p_CFR)/((1 - p_CFR) + p_CFR*(gamma1 + eta)); % reduced survival rate for infected infants
+if r3 <= 0 || r3 >= 1
+    warning('Computed r3 is outside (0,1): r3 = %.6f', r3);
+end
+d = r1-r3;          % weekly disease-induced death probability
+
+
 % --- Transmission rates ---
-beta11 = 0.80;    beta12 = 3.0;
+beta11 = 0.81;    beta12 = 3.0;
 beta21 = 0.002;   beta22 = 0.3;
 
 %% --- Vaccination parameters (GUI inputs + unit conversions) ---

@@ -57,13 +57,6 @@ Lambda = (1 - r1*(1 - eta)) * N1;                 % weekly births into infants
 r2     = 1 - (r1 * eta * N1) / N2;                % weekly survival probability, non-infants
 mu2_ann = 1 - r2^52;                              % annual death probability, non-infants (derived)
 
-% --- Disease-induced mortality, infants ---
-d_per_thousand = 6.3;                             % annual pertussis death probability per 1000 infected infants
-d_ann          = d_per_thousand/1000;             % annual pertussis death probability (fraction)
-d              = 1 - (1 - d_ann)^(1/52);          % weekly death probability (infected infants)
-r3_ann         = 1 - (mu1_ann + d_ann);           % annual survival probability for infected infants
-r3             = r3_ann^(1/52);                   % weekly survival probability for infected infants
-
 % --- Vaccination (all annual inputs converted to weekly probabilities) ---
 p        = 0.626;                                 % maternal vaccination coverage (fraction)
 psi1_ann = 0.947;                                 % annual vaccination probability for susceptible infants (fraction)
@@ -88,8 +81,16 @@ gamma1      = 1 - exp(-gamma1_rate);              % weekly recovery probability 
 gamma2_rate = 1/3;                                % recovery rate (non-infants)
 gamma2      = 1 - exp(-gamma2_rate);              % weekly recovery probability (non-infants)
 
-% --- Transmission rates ---
-beta11 = 0.80;   beta12 = 3.0;
+% --- Disease-induced mortality, infants ---
+p_CFR  = 6.3/1000;                                %Case Fatality Rate (CFR)
+r3 = (1 - p_CFR)/((1 - p_CFR) + p_CFR*(gamma1 + eta)); % reduced survival rate for infected infants
+if r3 <= 0 || r3 >= 1
+    warning('Computed r3 is outside (0,1): r3 = %.6f', r3);
+end
+d = r1-r3;          % weekly disease-induced death probability
+
+% --- Transmission rates --- 
+beta11 = 0.81;   beta12 = 3.0;
 beta21 = 0.002;  beta22 = 0.3;
 
 % Pack parameters into a struct (passed to downstream functions)
@@ -250,7 +251,7 @@ grid(ax,'off'); box(ax,'off');
 
 xlabel(ax,'Year');
 ylabel(ax,'Cumulative cases');
-title(ax,'Annual cumulative cases by age class');
+%title(ax,'Annual cumulative cases by age class');
 
 % Styling
 hb_inc(1).FaceColor = c1;   hb_inc(1).EdgeColor = 'none'; hb_inc(1).BarWidth = 0.8;
@@ -388,6 +389,39 @@ text(xt, yt + dy, lbl, ...
 
 exportgraphics(fig, fullfile(outdir_eps, 'boosters_noninfants_per10000.eps'), 'ContentType', 'vector');
 exportgraphics(fig, fullfile(outdir_png, 'boosters_noninfants_per10000.png'), 'Resolution', 300);
+
+
+
+%% 2) Annual cumulative pertussis-related deaths 
+fig = figure('Name', 'Annual cumulative pertussis-related deaths', 'Position', [200, 200, W, H]);
+ax  = axes(fig); hold(ax, 'on');
+
+b = bar(ax, year_vector, deaths_annual);
+b.FaceColor = c1; b.EdgeColor = 'none'; b.FaceAlpha = 1; b.BarWidth = 0.7;
+
+xlim(ax, [0.5, 5.5]);
+set(ax, 'XTick', 1:years, 'XTickLabel', 1:years);
+
+xlabel(ax, 'Year');
+ylabel(ax, 'Cumulative pertussis-related deaths');
+
+% Add headroom on y-axis to avoid labels being clipped
+yl = ylim(ax);
+yl = [yl(1), max([yl(2), 1.15 * max(b.YData)])];
+ylim(ax, yl);
+
+% Value labels above bars
+xt  = b.XEndPoints;
+yt  = b.YEndPoints;
+dy  = 0.005 * (yl(2) - yl(1));
+lbl = compose('$%d$', round(b.YData));
+
+text(xt, yt + dy, lbl, ...
+    'HorizontalAlignment','center', 'VerticalAlignment','bottom', ...
+    'FontSize',18, 'Interpreter','latex', 'Clipping','off');
+
+exportgraphics(fig, fullfile(outdir_eps, 'cumulative_pertussis_deaths.eps'), 'ContentType', 'vector');
+exportgraphics(fig, fullfile(outdir_png, 'cumulative_pertussis_deaths.png'), 'Resolution', 300);
 
 %% Summary
 disp(['EPS saved in: ', outdir_eps]);

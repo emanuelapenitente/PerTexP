@@ -44,13 +44,6 @@ Lambda = (1 - r1*(1-eta)) * N1;
 r2     = 1 - (r1*eta*N1) / N2;                  
 mu2_ann = 1-r2^52;                         
 
-% Disease-induced mortality
-d_per_thousand = 6.3;                       
-d_ann          = d_per_thousand/1000;         
-d              = 1- (1-d_ann)^(1/52);           
-r3_ann         = 1 - (mu1_ann+d_ann);        
-r3             = r3_ann^(1/52); 
-
 % Vaccination
 p        = 0.626;                              
 psi1_ann = 0.947;                         
@@ -62,17 +55,25 @@ sigma2   = 0.08;
 omega_rate = 1/(10*52);                  
 omega      = 1-exp(-omega_rate);          
 nu_rate    = 1/(10*52);        
-nu         = 1-exp(-nu_rate); 
+nu         = 1-exp(-nu_rate);
 
 % Recovery
 gamma1_rate = 1/3;              
-gamma1      = 1-exp(-gamma1_rate);        
+gamma1      = 1-exp(-gamma1_rate);       
 gamma2_rate = 1/3;          
-gamma2      = 1-exp(-gamma2_rate);          
+gamma2      = 1-exp(-gamma2_rate);
+
+% --- Disease-induced mortality, infants ---
+p_CFR  = 6.3/1000;                                     % Case Fatality Rate (CFR)
+r3 = (1 - p_CFR)/((1 - p_CFR) + p_CFR*(gamma1 + eta)); % reduced survival rate for infected infants
+if r3 <= 0 || r3 >= 1
+    warning('Computed r3 is outside (0,1): r3 = %.6f', r3);
+end
+d = r1-r3;          % weekly disease-induced death probability
 
 % Transmission rates
-beta11 = 0.80;    beta12 = 3.0;        
-beta21 = 0.002;   beta22 = 0.3;       
+beta11 = 0.81;    beta12 = 3.0;      
+beta21 = 0.002;   beta22 = 0.3;    
 
 % Pack parameters into a struct
 par = struct('N1',N1,'N2',N2,'Lambda',Lambda,'r1',r1,'r2',r2,'r3',r3,'eta',eta, ...
@@ -166,7 +167,7 @@ par = struct('N1',N1,'N2',N2,'Lambda',Lambda,'r1',r1,'r2',r2,'r3',r3,'eta',eta, 
              'd', d);
 
 % --- Grids for (psi2_ann, p) ---
-psi2_ann_grid = linspace(0,1);   % annual non-infant booster coverage
+psi2_ann_grid = linspace(0,0.1);   % annual non-infant booster coverage
 p_grid        = linspace(0,1);   % maternal coverage
 
 % Allocate Rc matrix
