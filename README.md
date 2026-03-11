@@ -5,7 +5,7 @@ The implementation of PerTexP is built upon a discrete-time compartmental model 
 
 This repository contains the MATLAB scripts and functions to **simulate different vaccination scenarios** and to compute the control reproduction number $\mathcal{R}_c$ under different vaccination strategies. This repository has three main files:
   
-- `pertexp_GUI.mlapp` — a MATLAB app with a Graphical User Interface (GUI), built with MATLAB App Designer, which allows users to interactively explore and evaluate different vaccination strategies in the context of the 2024 Italian pertussis outbreak,
+- `PerTexP_GUI.mlapp` — a MATLAB app with a Graphical User Interface (GUI), built with MATLAB App Designer, which allows users to interactively explore and evaluate different vaccination strategies in the context of the 2024 Italian pertussis outbreak,
 
 - `pertexp_simulator.m` — run simulations without the GUI,
 
@@ -18,7 +18,7 @@ This repository contains the MATLAB scripts and functions to **simulate differen
 
 | File | Type | Purpose |
 |---|---|---|
-| `pertexp_GUI.mlapp` | **MATLAB App** | Graphical User Interface to set vaccination parameters and initial conditions, optionally enable noise, and display interactive bar plots (annual, age-specific) over a **fixed 5-year horizon**. |
+| `PerTexP_GUI.mlapp` | **MATLAB App** | Graphical User Interface to set vaccination parameters and initial conditions, optionally enable noise, and display interactive bar plots (annual, age-specific) over a **fixed 5-year horizon**. |
 | `pertexp_logo.png` | **Image asset** | PerTexP logo used by the GUI (`pertexp_GUI.mlapp`) for display purposes (has a merely aesthetic purpose, it is not required to run the simulator/analysis scripts). |
 | `pertexp_run.m` | **Function** | Core routine called by the GUI: runs the simulation and returns the annual quantities displayed by the interactive bar plots. |
 | `pertexp_simulator.m` | **Script** | Standalone simulator **without GUI**. Runs a 5-year simulation (weekly steps), optionally adds inter-annual state noise, computes the age-specific annual cumulative infections and vaccinations, and displays and saves the corresponding figures. |
@@ -40,7 +40,7 @@ No additional toolboxes are required.
 
 ### 1) How to use the GUI
 
-Open and run `pertexp_GUI.mlapp`.
+Open and run `PerTexP_GUI.mlapp`.
 
 #### What you can change in the app
 
