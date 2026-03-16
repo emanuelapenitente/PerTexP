@@ -48,8 +48,8 @@ eta     = 1 - exp(-eta_ann);% weekly probability of aging out of infants
 
 % --- Survival probabilities, infants ---
 mu1_ann_per_thousand = 2.57230;                   % annual death probability per 1000 live births
-mu1_ann              = mu1_ann_per_thousand/1000; % annual death probability (fraction)
-r1_ann               = 1 - mu1_ann_per_thousand/10000; % annual survival probability (as used in the model)
+mu1_ann              = mu1_ann_per_thousand/1000; % annual death probability
+r1_ann               = 1 - mu1_ann                % annual survival probability
 r1                   = r1_ann^(1/52);             % weekly survival probability
 
 % --- Calibration to match desired equilibria ---
