@@ -86,6 +86,8 @@ par = struct('N1',N1,'N2',N2,'Lambda',Lambda,'r1',r1,'r2',r2,'r3',r3,'eta',eta, 
 outdir = fullfile(pwd,'fig_contour_eps');
 if ~exist(outdir,'dir'), mkdir(outdir); end
 
+outdir2 = fullfile(pwd,'fig_contour_png');
+if ~exist(outdir2,'dir'), mkdir(outdir2); end
 
 % --- Grids for (psi1_ann, p) ---
 psi1_ann_grid = linspace(0,1);   % annual infant coverage (baseline ~0.947) [
@@ -149,7 +151,7 @@ xline(ax, psi1_ann_base, ':', 'Color',[1 1 1], 'LineWidth',3);
 yline(ax, p_base,        ':', 'Color',[1 1 1], 'LineWidth',3);
 
 exportgraphics(ax, fullfile(outdir,'RC_contour_psi1.eps'), 'ContentType','vector');
-
+exportgraphics(ax, fullfile(outdir2,'RC_contour_psi1.png'), 'ContentType','vector');
 
 %% 2) As a function of (psi2_ann, p), with all other parameters fixed
 
@@ -227,6 +229,8 @@ xline(ax, psi2_ann_base, ':', 'Color',[1 1 1], 'LineWidth',3);
 yline(ax, p_base,':', 'Color',[1 1 1], 'LineWidth',3);
 
 exportgraphics(ax, fullfile(outdir,'RC_contour_psi2.eps'), 'ContentType','vector');
-
+exportgraphics(ax, fullfile(outdir2,'RC_contour_psi2.png'), 'ContentType','vector');
 
 disp(['EPS saved in: ' outdir]);
+
+disp(['PNG saved in: ' outdir2]);
