@@ -164,8 +164,8 @@ for a = 1:years
     v1 = sum(vax1_all(k1:k2));
     v2 = sum(vax2_all(k1:k2));
 
-    vax1_annual(a) = (v1/N1)*100;    % annual percentage (infants)
-    vax2_annual(a) = (v2/N2)*10000;  % annual boosters per 10,000 (non-infants)
+    vax1_annual(a) = min((v1/N1)*100, 100);      % annual percentage (infants)
+    vax2_annual(a) = min((v2/N2)*10000, 10000);  % annual boosters per 10,000 (non-infants)
 end
 
 %% --- Pack outputs for the GUI ---
