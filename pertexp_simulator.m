@@ -213,8 +213,8 @@ for a = 1:years
     vax1_annual(a) = sum(vax1_all(k1:k2));
     vax2_annual(a) = sum(vax2_all(k1:k2));
 
-    vax1_annual(a) = (vax1_annual(a)/N1)*100;
-    vax2_annual(a) = (vax2_annual(a)/N2)*10000;
+    vax1_annual(a) = min((vax1_annual(a)/N1)*100, 100);
+    vax2_annual(a) = min((vax2_annual(a)/N2)*10000, 10000);
 end
 
 % Annual pertussis-induced deaths (expressed per 1000 infant cases)
