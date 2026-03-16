@@ -35,12 +35,6 @@ mu1_ann              = mu1_ann_per_thousand/1000;
 r1_ann               = 1 - mu1_ann;  
 r1                   = r1_ann^(1/52);
 
-% --- Survival probabilities, infants ---
-mu1_ann_per_thousand = 2.57230;                   % annual death probability per 1000 live births
-mu1_ann              = mu1_ann_per_thousand/1000; % annual death probability
-r1_ann               = 1 - mu1_ann_per_thousand/10000; % annual survival probability
-r1                   = r1_ann^(1/52);             % weekly survival probability
-
 % --- Calibration to match desired equilibria ---
 Lambda = (1 - r1*(1 - eta)) * N1;                 % weekly births into infants
 r2     = 1 - (r1 * eta * N1) / N2;                % weekly survival probability, non-infants

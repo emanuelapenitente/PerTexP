@@ -49,18 +49,18 @@ eta     = 1 - exp(-eta_ann);% weekly probability of aging out of infants
 % --- Survival probabilities, infants ---
 mu1_ann_per_thousand = 2.57230;                   % annual death probability per 1000 live births
 mu1_ann              = mu1_ann_per_thousand/1000; % annual death probability
-r1_ann               = 1 - mu1_ann                % annual survival probability
+r1_ann               = 1 - mu1_ann;               % annual survival probability
 r1                   = r1_ann^(1/52);             % weekly survival probability
 
 % --- Calibration to match desired equilibria ---
 Lambda = (1 - r1*(1 - eta)) * N1;                 % weekly births into infants
 r2     = 1 - (r1 * eta * N1) / N2;                % weekly survival probability, non-infants
-mu2_ann = 1 - r2^52;                              % annual death probability, non-infants (derived)
+mu2_ann = 1 - r2^52;                              % annual death probability, non-infants
 
 % --- Vaccination (all annual inputs converted to weekly probabilities) ---
-p        = 0.626;                                 % maternal vaccination coverage (fraction)
-psi1_ann = 0.947;                                 % annual vaccination probability for susceptible infants (fraction)
-psi2_ann = 0.165e-2;                              % annual booster probability for susceptible non-infants (fraction)
+p        = 0.626;                                 % maternal vaccination coverage
+psi1_ann = 0.947;                                 % annual vaccination probability for susceptible infants
+psi2_ann = 0.165e-2;                              % annual booster probability for susceptible non-infants
 
 psi1     = 1 - (1 - psi1_ann)^(1/52);             % weekly infant vaccination probability
 psi2     = 1 - (1 - psi2_ann)^(1/52);             % weekly non-infant booster probability
@@ -93,14 +93,14 @@ d = r1-r3;          % weekly disease-induced death probability
 beta11 = 0.81;   beta12 = 3.0;
 beta21 = 0.002;  beta22 = 0.3;
 
-% Pack parameters into a struct (passed to downstream functions)
+% Pack parameters into a struct
 par = struct( ...
     'N1', N1, 'N2', N2, 'Lambda', Lambda, 'r1', r1, 'r2', r2, 'r3', r3, 'eta', eta, 'd', d, ...
     'p', p, 'psi1', psi1, 'psi2', psi2, 'sigma1', sigma1, 'sigma2', sigma2, ...
     'omega', omega, 'gamma1', gamma1, 'gamma2', gamma2, 'nu', nu, ...
     'beta11', beta11, 'beta12', beta12, 'beta21', beta21, 'beta22', beta22);
 
-% Compute R0, Rc and the DFE (requires function RC_calc)
+% Compute R0, Rc and the DFE
 [S1_DFE, V1_DFE, S2_DFE, V2_DFE, R0, RC] = RC_calc(par);
 fprintf('RC = %.3f,   R0 = %.3f\n', RC, R0);
 
@@ -110,7 +110,7 @@ fprintf('RC = %.3f,   R0 = %.3f\n', RC, R0);
 
 % --- Infants (see Section "Parametrisation") ---
 I10 = 5;
-V10 = N1 * ((8/12) * psi1_ann + (2/12) * p + (2/12) * p * psi1_ann); % assumed
+V10 = N1 * ((8/12) * psi1_ann + (2/12) * p + (2/12) * p * psi1_ann);
 R10 = 0;
 S10 = N1 - V10 - I10 - R10;
 
@@ -119,7 +119,7 @@ annual_births_past10y        = [397193; 407572; 414581; 431500; 450440; 469364; 
 annual_vaxcoverages_past10y  = [94.76; 95.14; 94; 94.03; 94.99; 95.07; 94.62; 93.55; 93.33; 94.64] / 100;
 
 I20 = 15;
-V20 = dot(annual_births_past10y, annual_vaxcoverages_past10y); % vaccinated non-infants (proxy)
+V20 = dot(annual_births_past10y, annual_vaxcoverages_past10y);
 R20 = 4064;
 S20 = N2 - V20 - I20 - R20;
 
@@ -151,9 +151,7 @@ deaths_all = zeros(1, T);      % pertussis-induced deaths in infants (weekly)
 
 %% Simulation and setting noise level
 % Here you can choose to add noise or not. 
-
 use_noise = false;   % true = add noise, false = no noise
-
 if use_noise
     noise_level = 0.05;   % ±5%
 else
@@ -161,7 +159,7 @@ else
 end
 
 % NOTE: results will differ run-to-run unless you fix RNG (e.g., rng(1)).
-% This script does not set the RNG seed (by design, to keep commands unchanged).
+% This script does not set the RNG seed.
 
 t_counter = 0;
 for yr = 1:years
@@ -172,8 +170,8 @@ for yr = 1:years
     [x, G1, G2, inc1, inc2, vax1, vax2, deaths, R1, R2] = discrete_system(t0, t1, x0, par);
 
     % Place the yearly outputs into the full-horizon arrays
-    X(:, t0+1:t1+1)       = x;       % states include both endpoints
-    G1_all(1, t0+1:t1)    = G1;      % weekly outputs: length 52
+    X(:, t0+1:t1+1)       = x;  
+    G1_all(1, t0+1:t1)    = G1;      
     G2_all(1, t0+1:t1)    = G2;
     inc1_all(1, t0+1:t1)  = inc1;
     inc2_all(1, t0+1:t1)  = inc2;
@@ -185,13 +183,13 @@ for yr = 1:years
     if yr < years
         x_end = x(:, end);
         x0    = add_noise_state(x_end, N1, N2, noise_level);
-        X(:, t1+1) = x0;   % store the "noisy reset" at the boundary for completeness
+        X(:, t1+1) = x0; 
     end
 
     t_counter = t1;
 end
 
-%% Annual aggregates (sum weekly quantities within each year)
+%% Annual aggregates
 % New annual cases (sum of weekly incidences)
 inc1_annual = zeros(years,1);
 inc2_annual = zeros(years,1);
@@ -403,7 +401,7 @@ xlim(ax, [0.5, 5.5]);
 set(ax, 'XTick', 1:years, 'XTickLabel', 1:years);
 
 xlabel(ax, 'Year');
-ylabel(ax, 'Cumulative pertussis-related deaths');
+ylabel(ax, 'Cumulative pertussis-related deaths (per 1000)');
 
 % Add headroom on y-axis to avoid labels being clipped
 yl = ylim(ax);
