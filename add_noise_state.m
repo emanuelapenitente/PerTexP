@@ -7,7 +7,8 @@ function x_noisy = add_noise_state(x, N1, N2, noise_level)
 %   x_noisy = x .* scale,
 % where scale_i = 1 + noise_level * Z_i,   Z_i ~ N(0,1).
 %
-%noise_level is the standard deviation of the multiplicative perturbation.
+% The resulting state perturbations are therefore not independent Gaussians.
+% Requires 0 <= noise_level <= 1/3 to keep clipped factors nonnegative.
 %
 % Renormalization:
 %  - After perturbation, the function enforces that the totals in each age class do not
@@ -25,7 +26,22 @@ function x_noisy = add_noise_state(x, N1, N2, noise_level)
 % Output:
 %  - x_noisy    : perturbed and (if needed) renormalized state vector
 
+validateattributes(x, {'numeric'}, ...
+    {'real','vector','numel',6,'finite','nonnegative'});
+validateattributes(N1, {'numeric'}, {'real','scalar','finite','positive'});
+validateattributes(N2, {'numeric'}, {'real','scalar','finite','positive'});
+validateattributes(noise_level, {'numeric'}, ...
+    {'real','scalar','finite','>=',0,'<=',1/3});
 x = x(:);
+if sum(x(1:3)) > N1*(1+1e-12) || sum(x(4:6)) > N2*(1+1e-12)
+    error('add_noise_state:InvalidPopulation', ...
+        'The input state exceeds an age-group population.');
+end
+% Do not draw random numbers when noise is disabled.
+if noise_level == 0
+    x_noisy = x;
+    return;
+end
 
 % Draw a 6x1 vector of independent standard Gaussian variables.
 % The multiplicative scaling factors have mean 1 and standard deviation noise_level:

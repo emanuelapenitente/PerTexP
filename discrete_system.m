@@ -7,7 +7,8 @@ function [x, G1, G2, inc1, inc2, vax1, vax2, deaths, R1, R2] = discrete_system(t
 % INPUT
 %   t0, t1 : integers with t1 > t0
 %   x0     : [6x1] initial conditions [S1; V1; I1; S2; V2; I2]
-%   par    : struct containing model parameters
+%   par    : struct containing model parameters, including M, the weekly
+%            net migration inflow into susceptible non-infants
 %
 % OUTPUT
 %   x      : [6 x (t1-t0+1)] solution trajectory (column 1 = x0)
@@ -31,8 +32,9 @@ R1 = zeros(1, T + 1);    R2 = zeros(1, T + 1);
 
 % Unpack parameters from struct
 N1 = par.N1; N2 = par.N2;
-Lambda = par.Lambda; 
-r1 = par.r1; r2 = par.r2; r3 = par.r3; d = par.d; 
+Lambda = par.Lambda;
+M = par.M;   % weekly net migration inflow into susceptible non-infants
+r1 = par.r1; r2 = par.r2; r3 = par.r3; d = par.d;
 eta = par.eta;
 p = par.p; 
 psi1 = par.psi1; psi2 = par.psi2;
@@ -75,7 +77,8 @@ for t = 1:T
     I1_next = r1 * G1(t) * (S1 + sigma1 * V1) + r3 * (1 - gamma1) * I1  - r3 * eta * I1;
 
     % Group 2 (non-infants)
-    S2_next = r1 * eta * S1 + r2 * nu * R2(t) + r2 * (1 - G2(t)) * S2 - r2 * psi2 * S2 + r2 * omega * V2;
+    % Net migrants are assumed to enter group 2 as susceptible individuals.
+    S2_next = M + r1 * eta * S1 + r2 * nu * R2(t) + r2 * (1 - G2(t)) * S2 - r2 * psi2 * S2 + r2 * omega * V2;
     V2_next = r1 * eta * V1 + r2 * psi2 * S2 - r2 * omega * V2 + r2 * (1 - sigma2 * G2(t)) * V2;
     I2_next = r3 * eta * I1 + r2 * G2(t) * (S2 + sigma2 * V2) + r2 * (1 - gamma2) * I2;
 
